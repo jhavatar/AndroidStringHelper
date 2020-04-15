@@ -53,9 +53,9 @@ def convert_strings(inpath, outpath, delim):
         row += headers
         writer.writerow(row)
         for i in range(len(names)):
-            print "src row : " + str(i)
             # Write name and each of it's translations
             name = names[i]
+            print "src row : " + str(i) + ", name = " + name
             translate = translates[i]
             value = values[i].encode('utf-8')
             if (cfg.export_rules["not_translatable"] == False) and (translate == "false"):
