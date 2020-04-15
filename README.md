@@ -19,5 +19,6 @@ This is a tool to convert a CSV file containing translations into localized andr
 
 # Config options
 edit `config.py`
+#### `export_rules`
 - `has_translations` -- if `True`, export strings that have at least one translation. Default `False`.
 - `not_translatable` -- if `True`, export strings that have set `translatable="false"`. Default `False`.
