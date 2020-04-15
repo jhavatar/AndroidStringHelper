@@ -5,6 +5,7 @@ import csv
 import os
 import errno
 import re
+import config as cfg
 from xml.dom import minidom
 
 '''
@@ -52,17 +53,27 @@ def convert_strings(inpath, outpath, delim):
         row += headers
         writer.writerow(row)
         for i in range(len(names)):
+            print "src row : " + str(i)
             # Write name and each of it's translations
             name = names[i]
             translate = translates[i]
             value = values[i].encode('utf-8')
+            if (cfg.export_rules["not_translatable"] == False) and (translate == "false"):
+                print "IGNORE not translatable"
+                continue
             row = [name, translate, value]
+            validTranslationCount = 0
             for translation in translations:
                 if (translation.has_key(name)) and (translation[name] is not None):
                     row.append(translation[name].encode('utf-8'))
+                    validTranslationCount += 1
                 else:
                     row.append('')
-            writer.writerow(row)
+            if (cfg.export_rules["has_translations"] == True) or \
+                    ((cfg.export_rules["has_translations"] != True) and (validTranslationCount == 0)):
+                writer.writerow(row)
+            else:
+                print "IGNORE has translation"
 
 
 # Read data from strings.xml file
