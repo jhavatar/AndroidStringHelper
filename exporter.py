@@ -58,7 +58,7 @@ def convert_strings(inpath, outpath, delim):
             value = values[i].encode('utf-8')
             row = [name, translate, value]
             for translation in translations:
-                if translation.has_key(name):
+                if (translation.has_key(name)) and (translation[name] is not None):
                     row.append(translation[name].encode('utf-8'))
                 else:
                     row.append('')
