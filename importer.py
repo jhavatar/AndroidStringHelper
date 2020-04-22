@@ -64,6 +64,7 @@ def convert_json(inpath, outpath, outname, delim):
     # write dictionary as json to file
     outfilename = os.path.join(outpath, outname)
     if not os.path.exists(os.path.dirname(outfilename)):
+        print "PATH does not exist " + outfilename
         try:
             os.makedirs(os.path.dirname(outfilename))
         except OSError as exc:  # Guard against race condition
@@ -74,6 +75,7 @@ def convert_json(inpath, outpath, outname, delim):
                              ensure_ascii=False)
     outfile = open(outfilename, "w")
     outfile.write(json_string)
+    outfile.flush()
     outfile.close()
 
 # Convert plurals.csv to Android plurals.xml
@@ -136,11 +138,13 @@ def convert_plurals(inpath, outpath, outname, delim):
                 outfile.write('        <item quantity="' + quantity + '">' + value + '</item>\n')
         outfile.write('    </plurals>\n')
         outfile.write('</resources>')
+        outfile.flush()
         outfile.close()
 
 
 # Convert strings.csv to Android strings.xml
 def convert_strings(inpath, outpath, outname, delim):
+    print "Convert strings"
     names = []
     translates = []
     outdirs = []
@@ -181,18 +185,23 @@ def convert_strings(inpath, outpath, outname, delim):
         values = strings[i]
         for j in range(len(names)):
             name = names[j]
-            translate = translates[j]
-            value = replace_special_chars(unicode(values[j])).encode('utf-8')
+            print "name = " + name
+            if (name):
+                translate = translates[j]
+                value = replace_special_chars(unicode(values[j])).encode('utf-8')
 
-            if outdirs[i] == 'values':
-                # default values, include translatable
-                if translate.lower() == 'false':
-                    outfile.write('    <string name="' + name + '" translatable="' + translate.lower() +'">' + value + '</string>\n')
-                else:
-                    outfile.write('    <string name="' + name + '">' + value + '</string>\n')
-            elif translate.lower() == 'true' and value:
-                    outfile.write('    <string name="' + name + '">' + value + '</string>\n')
+                if outdirs[i] == 'values':
+                    # default values, include translatable
+                    if translate.lower() == 'false':
+                        outfile.write('    <string name="' + name + '" translatable="' + translate.lower() +'">' + value + '</string>\n')
+                    else:
+                        outfile.write('    <string name="' + name + '">' + value + '</string>\n')
+                elif translate.lower() == 'true' and value:
+                        outfile.write('    <string name="' + name + '">' + value + '</string>\n')
+            else:
+                print "Ignore name is null or empty"
         outfile.write('</resources>')
+        outfile.flush()
         outfile.close()
 
 
